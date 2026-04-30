@@ -2,6 +2,9 @@
 !/.gitignore
 !/package.json
 !/server.js
+!/install/
+!/install/fedora-install.sh
+!/install/nginx-reverse-proxy-plan.md
 !/engine/
 !/engine/bitpanel.css
 !/engine/chat-style.css
