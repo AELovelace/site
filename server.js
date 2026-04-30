@@ -784,6 +784,7 @@ function renderChatEntryPage(errorMessage = "") {
 <html lang="en">
     <head>
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <title>Tuts+ Chat Application</title>
         <meta name="description" content="Tuts+ Chat Application" />
         <link rel="stylesheet" href="${appUrl("/chat-style.css")}" />
@@ -807,8 +808,27 @@ function renderChatClient(postUrl, logoutUrl, csrfToken = "") {
       const ding = new Audio(${JSON.stringify(appUrl("/ding.wav"))});
       ding.preload = "auto";
       const csrfToken = ${JSON.stringify(csrfToken)};
+      const viewport = window.visualViewport;
       if (chatbox) {
         chatbox.scrollTop = chatbox.scrollHeight;
+      }
+
+      function syncAppViewport() {
+        const viewportHeight = viewport ? viewport.height : window.innerHeight;
+        document.documentElement.style.setProperty("--app-height", viewportHeight + "px");
+      }
+
+      function scrollActiveInputIntoView() {
+        const activeElement = document.activeElement;
+        if (!activeElement || typeof activeElement.scrollIntoView !== "function") {
+          return;
+        }
+
+        if (activeElement.matches("input, textarea, [contenteditable='true']")) {
+          window.setTimeout(function () {
+            activeElement.scrollIntoView({ block: "nearest", inline: "nearest" });
+          }, 50);
+        }
       }
 
       function isNearBottom(element) {
@@ -1011,6 +1031,21 @@ function renderChatClient(postUrl, logoutUrl, csrfToken = "") {
         submitButton.addEventListener("click", submitMessage);
       }
 
+      syncAppViewport();
+      window.addEventListener("resize", syncAppViewport);
+      window.addEventListener("orientationchange", syncAppViewport);
+      window.addEventListener("focusin", function () {
+        syncAppViewport();
+        scrollActiveInputIntoView();
+      });
+      window.addEventListener("focusout", function () {
+        window.setTimeout(syncAppViewport, 50);
+      });
+      if (viewport) {
+        viewport.addEventListener("resize", syncAppViewport);
+        viewport.addEventListener("scroll", syncAppViewport);
+      }
+
       normalizeChatMedia();
       attachMediaStabilizers(true);
       connectChatStream();
@@ -1035,6 +1070,7 @@ async function renderGuestChatPage(session) {
 <html lang="en">
     <head>
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <title>Tuts+ Chat Application</title>
         <meta name="description" content="Tuts+ Chat Application" />
         <link rel="stylesheet" href="${appUrl("/chat-style.css")}" />
@@ -1084,6 +1120,7 @@ async function renderDashboardPage(session, responseHtml = "") {
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Dashboard - Client area</title>
     <link rel="stylesheet" href="${appUrl("/chat-style.css")}" />
     <link rel="stylesheet" href="${appUrl("/img-upload.css")}" />
