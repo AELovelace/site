@@ -7,6 +7,7 @@ APP_GROUP="sitechat"
 APP_ROOT="/opt/sitechat"
 APP_PORT="3000"
 APP_HOST="0.0.0.0"
+APP_BASE_PATH="/chat"
 NODE_MAJOR="22"
 SERVICE_FILE="/etc/systemd/system/${APP_NAME}.service"
 ENV_FILE="/etc/${APP_NAME}.env"
@@ -58,6 +59,7 @@ write_env() {
   cat > "${ENV_FILE}" <<EOF
 PORT=${APP_PORT}
 HOST=${APP_HOST}
+BASE_PATH=${APP_BASE_PATH}
 NODE_ENV=production
 EOF
   chmod 0640 "${ENV_FILE}"

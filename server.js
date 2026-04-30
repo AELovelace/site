@@ -8,6 +8,7 @@ const { URL } = require("url");
 
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || "0.0.0.0";
+const BASE_PATH = normalizeBasePath(process.env.BASE_PATH || "");
 const APP_ROOT = path.join(__dirname, "engine");
 const DATA_ROOT = path.join(__dirname, "data");
 const USERS_DB_PATH = path.join(DATA_ROOT, "users.db");
@@ -43,6 +44,37 @@ const MIME_TYPES = {
   ".zip": "application/zip",
 };
 
+function normalizeBasePath(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed || trimmed === "/") {
+    return "";
+  }
+
+  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return withLeadingSlash.endsWith("/") ? withLeadingSlash.slice(0, -1) : withLeadingSlash;
+}
+
+function appUrl(pathname = "/") {
+  const normalizedPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  return `${BASE_PATH}${normalizedPath}`;
+}
+
+function stripBasePath(pathname) {
+  if (!BASE_PATH) {
+    return pathname;
+  }
+
+  if (pathname === BASE_PATH) {
+    return "/";
+  }
+
+  if (pathname.startsWith(`${BASE_PATH}/`)) {
+    return pathname.slice(BASE_PATH.length);
+  }
+
+  return null;
+}
+
 function shouldUseSecureCookies(request) {
   const forwardedProto = (request.headers["x-forwarded-proto"] || "").split(",")[0].trim().toLowerCase();
   return forwardedProto === "https" || request.socket.encrypted === true;
@@ -51,7 +83,7 @@ function shouldUseSecureCookies(request) {
 function buildCookie(name, value, request, overrides = {}) {
   const parts = [
     `${name}=${value}`,
-    `Path=${overrides.path || "/"}`,
+    `Path=${overrides.path || (BASE_PATH || "/")}`,
     "HttpOnly",
     `SameSite=${overrides.sameSite || "Lax"}`,
   ];
@@ -448,16 +480,16 @@ function resolveAvatarSrc(isRegistered, avatarName) {
   const preferredName = avatarName || (isRegistered ? "default" : "rando");
   const preferredPath = path.join(IMAGI_ROOT, preferredName);
   if (fs.existsSync(preferredPath)) {
-    return `/imagi/${encodeURIComponent(preferredName)}`;
+    return appUrl(`/imagi/${encodeURIComponent(preferredName)}`);
   }
 
   const fallbackName = isRegistered ? "default" : "rando";
   const fallbackPath = path.join(IMAGI_ROOT, fallbackName);
   if (fs.existsSync(fallbackPath)) {
-    return `/imagi/${encodeURIComponent(fallbackName)}`;
+    return appUrl(`/imagi/${encodeURIComponent(fallbackName)}`);
   }
 
-  return "/imagi/default";
+  return appUrl("/imagi/default");
 }
 
 function resolveUploadedImageSrc(imageName) {
@@ -470,7 +502,7 @@ function resolveUploadedImageSrc(imageName) {
     return "";
   }
 
-  return `/uimg/${encodeURIComponent(imageName)}`;
+  return appUrl(`/uimg/${encodeURIComponent(imageName)}`);
 }
 
 function resolveRareAwooSrc(imageName) {
@@ -483,7 +515,7 @@ function resolveRareAwooSrc(imageName) {
     return "";
   }
 
-  return `/rare_awoos/${encodeURIComponent(imageName)}`;
+  return appUrl(`/rare_awoos/${encodeURIComponent(imageName)}`);
 }
 
 function renderChatEvent(row) {
@@ -710,16 +742,16 @@ function renderRegistrationPage(messageHtml = "") {
 <head>
     <meta charset="utf-8"/>
     <title>Registration</title>
-    <link rel="stylesheet" href="/style.css"/>
+    <link rel="stylesheet" href="${appUrl("/style.css")}"/>
 </head>
 <body>
-${messageHtml || `    <form class="form" action="/registration.php" method="post">
+${messageHtml || `    <form class="form" action="${appUrl("/registration.php")}" method="post">
         <h1 class="login-title">Registration</h1>
         <input type="text" class="login-input" name="username" placeholder="Chat Name" required />
         <input type="text" class="login-input" name="email" placeholder="Auth Code (recovery)">
         <input type="password" class="login-input" name="password" placeholder="Password">
         <input type="submit" name="submit" value="Register" class="login-button">
-        <p class="link"><a href="/login.php">Click to Login</a></p>
+        <p class="link"><a href="${appUrl("/login.php")}">Click to Login</a></p>
     </form>`}
 </body>
 </html>`;
@@ -731,16 +763,16 @@ function renderLoginPage(messageHtml = "") {
 <head>
     <meta charset="utf-8"/>
     <title>Login</title>
-    <link rel="stylesheet" href="/style.css"/>
+    <link rel="stylesheet" href="${appUrl("/style.css")}"/>
 </head>
 <body>
-${messageHtml || `    <form class="form" method="post" name="login" action="/login.php">
+${messageHtml || `    <form class="form" method="post" name="login" action="${appUrl("/login.php")}">
         <h1 class="login-title">Login</h1>
         <input type="text" class="login-input" name="username" placeholder="Username" autofocus="true"/>
         <input type="password" class="login-input" name="password" placeholder="Password"/>
         <input type="submit" value="Login" name="submit" class="login-button"/>
-        <p><a href="/registration.php">New Registration</a></p>
-        <p><a href="/chat.php">join as an unregistered user</a></p>
+        <p><a href="${appUrl("/registration.php")}">New Registration</a></p>
+        <p><a href="${appUrl("/chat.php")}">join as an unregistered user</a></p>
   </form>`}
 </body>
 </html>`;
@@ -754,13 +786,13 @@ function renderChatEntryPage(errorMessage = "") {
         <meta charset="utf-8" />
         <title>Tuts+ Chat Application</title>
         <meta name="description" content="Tuts+ Chat Application" />
-        <link rel="stylesheet" href="/chat-style.css" />
+        <link rel="stylesheet" href="${appUrl("/chat-style.css")}" />
     </head>
     <body>
     ${errorBlock}
     <div id="loginform">
       <p>Please enter your chat handle</p>
-      <form action="/chat.php" method="post">
+      <form action="${appUrl("/chat.php")}" method="post">
         <input type="text" name="name" id="name" />
         <input type="submit" name="enter" id="enter" value="Enter" />
       </form>
@@ -772,7 +804,7 @@ function renderChatEntryPage(errorMessage = "") {
 function renderChatClient(postUrl, logoutUrl, csrfToken = "") {
   return `<script>
       const chatbox = document.getElementById("chatbox");
-      const ding = new Audio("/ding.wav");
+      const ding = new Audio(${JSON.stringify(appUrl("/ding.wav"))});
       ding.preload = "auto";
       const csrfToken = ${JSON.stringify(csrfToken)};
       if (chatbox) {
@@ -798,7 +830,9 @@ function renderChatClient(postUrl, logoutUrl, csrfToken = "") {
         image.setAttribute("height", "24");
 
         const source = image.getAttribute("src") || "";
-        const fallbackSrc = source.includes("/imagi/rando") ? "/imagi/rando" : "/imagi/default";
+        const fallbackSrc = source.includes("/imagi/rando")
+          ? ${JSON.stringify(appUrl("/imagi/rando"))}
+          : ${JSON.stringify(appUrl("/imagi/default"))};
 
         image.onerror = function () {
           if (image.dataset.fallbackApplied === "1") {
@@ -864,7 +898,7 @@ function renderChatClient(postUrl, logoutUrl, csrfToken = "") {
 
       async function loadLog() {
         const shouldStickToBottom = isNearBottom(chatbox);
-        const response = await fetch("/log.html", { cache: "no-store" });
+        const response = await fetch(${JSON.stringify(appUrl("/log.html"))}, { cache: "no-store" });
         const html = await response.text();
         chatbox.innerHTML = html;
         normalizeChatMedia();
@@ -900,7 +934,7 @@ function renderChatClient(postUrl, logoutUrl, csrfToken = "") {
 
       function connectChatStream() {
         const since = encodeURIComponent(chatbox.dataset.lastEventId || "0");
-        const stream = new EventSource("/events?since=" + since);
+        const stream = new EventSource(${JSON.stringify(appUrl("/events?since="))} + since);
         stream.addEventListener("chat", function (event) {
           try {
             const payload = JSON.parse(event.data);
@@ -1003,7 +1037,7 @@ async function renderGuestChatPage(session) {
         <meta charset="utf-8" />
         <title>Tuts+ Chat Application</title>
         <meta name="description" content="Tuts+ Chat Application" />
-        <link rel="stylesheet" href="/chat-style.css" />
+        <link rel="stylesheet" href="${appUrl("/chat-style.css")}" />
     </head>
     <body>
       <div id="online">
@@ -1018,7 +1052,7 @@ async function renderGuestChatPage(session) {
         <div id="inner">
           <div id="menu">
             <p>/$&emsp;USERNAME:&emsp;${escapeHtml(session.name)}&emsp;
-              <form id="exit" method="post" action="${"/logout.php"}" style="display:inline;">
+              <form id="exit" method="post" action="${appUrl("/logout.php")}" style="display:inline;">
                 <input type="hidden" name="csrf_token" value="${escapeHtml(session.csrfToken || "")}">
                 <button type="submit" style="background:none;border:0;color:red;font:inherit;cursor:pointer;">Exit Chat</button>
               </form>
@@ -1031,7 +1065,7 @@ async function renderGuestChatPage(session) {
           </form>
         </div>
       </div>
-      ${renderChatClient("/post.php", "/logout.php", session.csrfToken || "")}
+      ${renderChatClient(appUrl("/post.php"), appUrl("/logout.php"), session.csrfToken || "")}
     </body>
 </html>`;
 }
@@ -1039,10 +1073,10 @@ async function renderGuestChatPage(session) {
 async function renderDashboardPage(session, responseHtml = "") {
   const chatState = await loadChatState();
   const rareAwoos = Array.from({ length: 14 }, (_, index) => index + 1)
-    .map((id) => `<form class="awoo-link" method="post" action="/rare_awoos/${id}.php">
+    .map((id) => `<form class="awoo-link" method="post" action="${appUrl(`/rare_awoos/${id}.php`)}">
         <input type="hidden" name="csrf_token" value="${escapeHtml(session.csrfToken)}">
         <button type="submit" style="background:none;border:0;padding:0;cursor:pointer;">
-          <img src="/rare_awoos/${id}.png" width="64" height="64" alt="Rare awoo ${id}">
+          <img src="${appUrl(`/rare_awoos/${id}.png`)}" width="64" height="64" alt="Rare awoo ${id}">
         </button>
       </form>`)
     .join("");
@@ -1051,22 +1085,22 @@ async function renderDashboardPage(session, responseHtml = "") {
 <head>
     <meta charset="utf-8">
     <title>Dashboard - Client area</title>
-    <link rel="stylesheet" href="/chat-style.css" />
-    <link rel="stylesheet" href="/img-upload.css" />
-    <link rel="stylesheet" href="/bitpanel.css" />
+    <link rel="stylesheet" href="${appUrl("/chat-style.css")}" />
+    <link rel="stylesheet" href="${appUrl("/img-upload.css")}" />
+    <link rel="stylesheet" href="${appUrl("/bitpanel.css")}" />
 </head>
 <body>
   <div class="online">
     <p>:3</p>
     <div id="slideout" class="popout-panel">
       <button type="button" class="panel-toggle" data-panel-toggle="slideout" aria-expanded="false" aria-controls="slideout_inner">
-        <img src="/cpanel.png" alt="BitPanel" />
+        <img src="${appUrl("/cpanel.png")}" alt="BitPanel" />
       </button>
       <div id="slideout_inner">
         <p>logged in as:</p>
         <p>${escapeHtml(session.username)}!</p>
         <div class="imagi"><p>IMAGI Control Panel</p>
-          <form id="frm-image-upload" action="/dashboard.php" name="img" method="post" enctype="multipart/form-data">
+          <form id="frm-image-upload" action="${appUrl("/dashboard.php")}" name="img" method="post" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="${escapeHtml(session.csrfToken)}">
             <div class="form-row">
               <p>Upload New Imagi</p>
@@ -1080,7 +1114,7 @@ async function renderDashboardPage(session, responseHtml = "") {
           </form>
         </div>
         <p><br>
-          <form id="logout-form" method="post" action="/logout.php" style="display:inline;">
+          <form id="logout-form" method="post" action="${appUrl("/logout.php")}" style="display:inline;">
             <input type="hidden" name="csrf_token" value="${escapeHtml(session.csrfToken)}">
             <button type="submit" style="background:none;border:0;color:red;font:inherit;cursor:pointer;">Logout</button>
           </form>
@@ -1099,7 +1133,7 @@ async function renderDashboardPage(session, responseHtml = "") {
     </form>
     <div id="awoopanel" class="popout-panel">
       <button type="button" class="panel-toggle" data-panel-toggle="awoopanel" aria-expanded="false" aria-controls="awoopanel_inner">
-        <img src="/media/chat/awoos.png" alt="Rare Awoos">
+        <img src="${appUrl("/media/chat/awoos.png")}" alt="Rare Awoos">
       </button>
       <div id="awoopanel_inner">
         <div class="awoo-grid">${rareAwoos}</div>
@@ -1107,7 +1141,7 @@ async function renderDashboardPage(session, responseHtml = "") {
     </div>
   </div>
   ${responseHtml}
-  ${renderChatClient("/post-reg.php", "/logout.php", session.csrfToken)}
+  ${renderChatClient(appUrl("/post-reg.php"), appUrl("/logout.php"), session.csrfToken)}
 </body>
 </html>`;
 }
@@ -1120,7 +1154,7 @@ function requireAuth(request, response) {
   const { sid, session } = getSession(request);
   if (!session || !session.username) {
     clearSession(request, response, sid);
-    redirect(response, "/login.php");
+    redirect(response, appUrl("/login.php"));
     return null;
   }
   return { sid, session };
@@ -1139,7 +1173,7 @@ async function handleRegistrationPost(request, response) {
   if (!username || !email || !password) {
     writeHtml(response, 400, renderRegistrationPage(`<div class='form'>
                   <p>Required fields are missing.</p>
-                  <p class='link'>Click here to <a href='/registration.php'>registration</a> again.</p>
+                  <p class='link'>Click here to <a href='${appUrl("/registration.php")}'>registration</a> again.</p>
                   </div>`));
     return;
   }
@@ -1147,7 +1181,7 @@ async function handleRegistrationPost(request, response) {
   if (!isValidUsername(username)) {
     writeHtml(response, 400, renderRegistrationPage(`<div class='form'>
                   <p>Usernames must be 1-32 characters and use only letters, numbers, underscores, or hyphens.</p>
-                  <p class='link'>Click here to <a href='/registration.php'>registration</a> again.</p>
+                  <p class='link'>Click here to <a href='${appUrl("/registration.php")}'>registration</a> again.</p>
                   </div>`));
     return;
   }
@@ -1155,7 +1189,7 @@ async function handleRegistrationPost(request, response) {
   if (findUser(username)) {
     writeHtml(response, 409, renderRegistrationPage(`<div class='form'>
                   <p>Required fields are missing.</p>
-                  <p class='link'>Click here to <a href='/registration.php'>registration</a> again.</p>
+                  <p class='link'>Click here to <a href='${appUrl("/registration.php")}'>registration</a> again.</p>
                   </div>`));
     return;
   }
@@ -1170,7 +1204,7 @@ async function handleRegistrationPost(request, response) {
 
   writeHtml(response, 200, renderRegistrationPage(`<div class='form'>
                   <p>Successfully registered. Fun features to come :3</p><br/>
-                  <p class='link'>Click here to <a href='/login.php'>Login</a></p>
+                  <p class='link'>Click here to <a href='${appUrl("/login.php")}'>Login</a></p>
                   </div>`));
 }
 
@@ -1188,7 +1222,7 @@ async function handleLoginPost(request, response) {
   if (!user || !verification.valid) {
     writeHtml(response, 200, renderLoginPage(`<div class='form'>
                   <h3>Incorrect Username/password.</h3><br/>
-                  <p class='link'>Click here to <a href='/login.php'>Login</a> again.</p>
+                  <p class='link'>Click here to <a href='${appUrl("/login.php")}'>Login</a> again.</p>
                   </div>`));
     return;
   }
@@ -1201,7 +1235,7 @@ async function handleLoginPost(request, response) {
     username: user.username,
     name: user.username,
   });
-  redirect(response, "/dashboard.php");
+  redirect(response, appUrl("/dashboard.php"));
 }
 
 async function handleLogout(request, response) {
@@ -1211,7 +1245,7 @@ async function handleLogout(request, response) {
     return;
   }
   clearSession(request, response, sid);
-  redirect(response, "/login.php");
+  redirect(response, appUrl("/login.php"));
 }
 
 async function handleGuestChatGet(request, response, url) {
@@ -1225,7 +1259,7 @@ async function handleGuestChatGet(request, response, url) {
       });
     }
     clearSession(request, response, sid);
-    redirect(response, "/login.php");
+    redirect(response, appUrl("/login.php"));
     return;
   }
 
@@ -1247,7 +1281,7 @@ async function handleGuestChatPost(request, response) {
   }
 
   createSession(request, response, { name });
-  redirect(response, "/chat.php");
+  redirect(response, appUrl("/chat.php"));
 }
 
 async function handleDashboardGet(request, response, url) {
@@ -1384,7 +1418,7 @@ async function handleRareAwoo(request, response, rareAwooName) {
     avatar_name: auth.session.username,
     image_name: fileName,
   });
-  redirect(response, "/dashboard.php");
+  redirect(response, appUrl("/dashboard.php"));
 }
 
 async function serveStaticFile(response, filePath) {
@@ -1438,13 +1472,19 @@ initializeDatabase();
 const server = http.createServer(async (request, response) => {
   try {
     const url = new URL(request.url, `http://${request.headers.host || "localhost"}`);
+    const appPath = stripBasePath(url.pathname);
 
-    if (request.method === "GET" && url.pathname === "/") {
-      redirect(response, "/login.php");
+    if (appPath === null) {
+      writeText(response, 404, "Not found");
       return;
     }
 
-    if (url.pathname === "/registration.php") {
+    if (request.method === "GET" && appPath === "/") {
+      redirect(response, appUrl("/login.php"));
+      return;
+    }
+
+    if (appPath === "/registration.php") {
       if (request.method === "GET") {
         await handleRegistrationGet(response);
         return;
@@ -1455,7 +1495,7 @@ const server = http.createServer(async (request, response) => {
       }
     }
 
-    if (url.pathname === "/login.php") {
+    if (appPath === "/login.php") {
       if (request.method === "GET") {
         await handleLoginGet(response);
         return;
@@ -1466,12 +1506,12 @@ const server = http.createServer(async (request, response) => {
       }
     }
 
-    if (request.method === "POST" && url.pathname === "/logout.php") {
+    if (request.method === "POST" && appPath === "/logout.php") {
       await handleLogout(request, response);
       return;
     }
 
-    if (url.pathname === "/chat.php") {
+    if (appPath === "/chat.php") {
       if (request.method === "GET") {
         await handleGuestChatGet(request, response, url);
         return;
@@ -1482,7 +1522,7 @@ const server = http.createServer(async (request, response) => {
       }
     }
 
-    if (url.pathname === "/dashboard.php") {
+    if (appPath === "/dashboard.php") {
       if (request.method === "GET") {
         await handleDashboardGet(request, response, url);
         return;
@@ -1493,23 +1533,23 @@ const server = http.createServer(async (request, response) => {
       }
     }
 
-    if (request.method === "POST" && url.pathname === "/post.php") {
+    if (request.method === "POST" && appPath === "/post.php") {
       await handleGuestPost(request, response);
       return;
     }
 
-    if (request.method === "POST" && url.pathname === "/post-reg.php") {
+    if (request.method === "POST" && appPath === "/post-reg.php") {
       await handleRegisteredPost(request, response);
       return;
     }
 
-    const rareAwooMatch = url.pathname.match(/^\/rare_awoos\/(\d+)\.php$/);
+    const rareAwooMatch = appPath.match(/^\/rare_awoos\/(\d+)\.php$/);
     if (request.method === "POST" && rareAwooMatch) {
       await handleRareAwoo(request, response, rareAwooMatch[1]);
       return;
     }
 
-    if (request.method === "GET" && url.pathname === "/log.html") {
+    if (request.method === "GET" && appPath === "/log.html") {
       response.writeHead(200, {
         "Content-Type": "text/html; charset=utf-8",
         "Cache-Control": "no-store",
@@ -1518,13 +1558,13 @@ const server = http.createServer(async (request, response) => {
       return;
     }
 
-    if (request.method === "GET" && url.pathname === "/events") {
+    if (request.method === "GET" && appPath === "/events") {
       handleChatStream(request, response, url);
       return;
     }
 
     if (request.method === "GET") {
-      await handleStatic(response, url.pathname);
+      await handleStatic(response, appPath);
       return;
     }
 
@@ -1536,5 +1576,5 @@ const server = http.createServer(async (request, response) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`Engine clone server running at http://${HOST}:${PORT}/login.php`);
+  console.log(`Engine clone server running at http://${HOST}:${PORT}${appUrl("/login.php")}`);
 });
