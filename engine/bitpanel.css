@@ -1,0 +1,52 @@
+#slideout {
+  left: 0;
+  width: 25px;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+}
+#slideout_inner {
+  position: fixed;
+  top: 0px;
+  left: -600px;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+}
+#slideout.is-open {
+  left: 1600px;
+}
+#slideout.is-open #slideout_inner {
+  left: 0;
+}
+#awoopanel {
+  left: 0;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: .75s;
+}
+#awoopanel_inner {
+	position: fixed;
+top: 40px;
+  left: -1600px;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 1.5s;
+  transition-duration: .75s;
+}
+#awoopanel.is-open {
+  left: 700px;
+}
+#awoopanel.is-open #awoopanel_inner {
+  left: 0;
+}
+
+.panel-toggle {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}

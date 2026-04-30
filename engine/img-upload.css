@@ -1,0 +1,38 @@
+#slideout {
+  left: 0;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  background-color: black;
+}
+#slideout_inner {
+  position: fixed;
+  top: 40px;
+  left: -500px;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  background-color: black;
+  border: 1px solid #a7a7a7;
+  margin: 1px;
+  width:50%;
+}
+#slideout:hover {
+  left: 500px;
+}
+#slideout:hover #slideout_inner {
+  left: 0;
+  background-color: 111111;
+}
+#fileToUpload: {
+	form{
+		display: flex;
+		justify-content: left;
+		font-family: 'VCR OSD Mono';
+		color: #cbf2f1;
+		width:100%;
+		background-color: 111111;
+  }
+}

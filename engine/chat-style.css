@@ -1,0 +1,371 @@
+@font-face {
+	font-family: 'VCR OSD Mono';
+	font-style: normal;
+	font-weight: normal;
+	src: local('VCR OSD Mono'), url('VCR_OSD_MONO.woff') format('woff');
+}
+@font-face {
+	font-family: 'mingliu';
+	font-style: normal;
+	font-weight: normal;
+	src: local('mingliu'), url('mingliu.woff') format('woff');
+}
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    margin: 20px auto;
+	background-color: #000;
+	color: white;
+    font-family: VCR OSD Mono;
+    font-weight: 300;
+	width: 100%;
+	height: 600px;
+	display:flex;
+}
+
+p{
+  margin-left: 2%;
+  color: #f1cbf2;
+  font-family: VCR OSD Mono;
+  font-size: small;
+  padding-left: 10 px;
+  text-align: left;
+}
+
+a {
+    color: #0000ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a#exit {
+    color: red;
+    border-radius: 4px;
+    font-weight: bold;
+	text-align: right;
+}
+
+/* Forms and Inputs*/
+form {
+    display: inline-block;
+	font-family: 'VCR OSD Mono';
+	color: #cbf2f1;
+	background-color: 111111;
+}
+
+form label {
+    font-size: 1.5rem;
+    font-weight: bold;
+	font-family: 'VCR OSD Mono';
+	color: #cbf2f1;
+	background-color: 111111;
+}
+input {
+    font-family: 'VCR OSD Mono';
+	color: cbf2f1;
+	background-color: #bf8fc7;
+	width: 60%;
+}
+
+input[type="range"] {
+ -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]:focus {
+ outline: none;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+ background: #752F5A;
+ height: 5px;
+}
+
+input[type="range"]::-moz-range-track {
+ background: #752F5A;
+ height: 5px;
+}
+input[type="range"]::-webkit-slider-thumb {
+ -webkit-appearance: none;
+ height: 15px;
+ width: 15px;
+ background: #aa0000;
+ border:2px;
+ margin-top: -5px;
+ border-radius: 50%;
+ border-color: #ff0000;
+}
+input[type="range"]::-moz-range-thumb {
+ height: 15px;
+ width: 15px;
+ background: #aa0000;
+ border:2px;
+ margin-top: -5px;
+ border-radius: 50%;
+ border-color: #ff0000;
+}
+
+.imagi form {
+	background: 111111;
+	margin-left: 2%;			/*Margins*/
+	padding-left: 10 px;
+	text-align: left;
+}
+.imagi input[type="file"] {
+	font-family: 'VCR OSD Mono';
+	color: cbf2f1;
+	background-color: #332436;
+	width: 98%;
+}
+.imagi input::file-selector-button {
+	font-family: VCR OSD Mono;
+    font-weight: bold;
+    color: cbf2f1;
+	background-color: #752f5a;
+    padding: 0.5em;
+    border: ridge;
+    border-radius: 0px;
+}
+.imagi input[type=button], input[type=submit], input[type=reset] {
+	font-family: VCR OSD Mono;
+    font-weight: bold;
+    color: cbf2f1;
+	background-color: #000000;
+    padding: 0.5em;
+    border: ridge;
+    border-radius: 0px;
+	width: 98%;
+}
+
+/* . classes*/
+.error {
+    color: #ff0000;
+}
+.imagi{
+	postition: absolute; bottom 0;
+}
+.inner{
+	padding-left: 5%;
+	padding-right: 10%;
+	padding-bottom: 0%;
+	vertical-align: top;
+}
+.msgln {
+    margin: 0 0 5px 0;
+}
+
+.chat-avatar {
+    width: 48px;
+    height: 24px;
+    vertical-align: middle;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.chat-upload {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 2px;
+}
+
+.chat-awoo {
+    width: 128px;
+    max-width: 100%;
+}
+
+.awoo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 64px);
+    gap: 4px;
+    align-items: start;
+}
+
+.awoo-link {
+    display: block;
+    width: 64px;
+    height: 64px;
+}
+  
+.msgln span.left-info {
+    color: orangered;
+}
+  
+.msgln span.chat-time {
+    color: #cc96cd;
+    font-size: 85%;
+    vertical-align: super;
+}
+  
+.msgln b.user-name, .msgln b.user-name-left {
+    font-weight: bold;
+    background: #752f5a;	/* Darker Red 		*/
+    color: d0f5f2;			/* light light blue	*/
+    padding: 2px 4px;
+    font-size: 90%;
+    border-radius: 4px;
+    margin: 0 5px 0 0;
+}
+  
+.msgln b.user-name-left {
+    background: black;
+}
+.online{
+	height: 500px;
+	max-height: 85%;
+	width: 26px;
+	background-color: black;
+	overflow: hidden;
+
+	padding-left: 0px;
+	bottom: 0;
+	left: 0;
+	vertical-align: top;
+
+}
+  
+#wrapper{
+	background-color: #0;	
+	padding-right: 5%;
+	padding-left: 0%;
+	display:flex;
+	flex-direction:column;
+	height: 720px;
+	max-height: 100%;
+	width: 100%;
+},
+#loginform{
+    margin: 0px auto;
+    padding-bottom: 25px;
+    background: #eee;
+    width: 40%;
+    max-width: 100%;
+	color: d0f5f2;
+    border: 2px solid #212121;
+}
+
+
+#loginform p {
+    padding-left: 5%;
+	padding-right: 20%;
+    font-size: 1.4rem;
+    font-weight: bold;
+	color: d0f5f2;
+}
+
+
+
+#chatbox {
+	font-family: mingliu;
+	text-align: left;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    padding: 1px;
+	padding-left: 1%;
+	padding-right: 8%;
+    background: #000;
+    height: 500px;
+	max-height: 85%;
+    width: 100%;
+    border: 1px solid #a7a7a7;
+    overflow: auto;
+    border-radius: 4px;
+    border-bottom: 4px solid #111111;
+}
+
+#usermsg {
+    flex: 1;
+    border-radius: 4px;
+    border: 1px solid #f7b6f9;
+	font-family: 'VCR OSD Mono';
+	color: #cbf2f1;
+	background-color: #111111;
+}
+
+#name {
+    width: 40%;
+    border-radius: 1px;
+    border: 1px solid #f7b6f9;
+	color: b3fcff;
+}
+  
+#submitmsg{
+	  padding-right: 20%;
+	  width: 40px;
+	  color: b3fcff;
+}
+#enter{
+    background-color: #111111;
+    border: 2px solid #e65100;
+    color: white;
+    padding: 4px 10px;
+    font-weight: bold;
+    border-radius: 4px;
+	width: 20%;
+	align-self: self-end;
+}
+  
+
+#menu {
+    display: flex;
+	background-color: #111111;
+	float: left;
+	width: 100%
+}
+  
+#menu p.welcome {
+    flex: 1;
+}
+
+#slideout {
+  left: 0;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  background-color: black;
+}
+#slideout_inner {
+  position: fixed;
+  top: 40px;
+  left: -500px;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  background-color: black;
+  border: 1px solid #a7a7a7;
+  margin: 1px;
+  width:50%;
+}
+#slideout.is-open {
+  left: 500px;
+}
+#slideout.is-open #slideout_inner {
+  left: 0;
+  background-color: 111111;
+}
+.panel-toggle {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+#fileToUpload: {
+	form{
+		display: flex;
+		justify-content: left;
+		font-family: 'VCR OSD Mono';
+		color: #cbf2f1;
+		width:100%;
+		background-color: 111111;
+  }
+}
+
+  

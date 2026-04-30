@@ -1,0 +1,9 @@
+{
+  "name": "chat-php-node-clone",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Near-identical Node.js clone of the original chat.php app",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
