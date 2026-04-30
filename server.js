@@ -7,6 +7,7 @@ const { DatabaseSync } = require("node:sqlite");
 const { URL } = require("url");
 
 const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || "0.0.0.0";
 const APP_ROOT = path.join(__dirname, "engine");
 const DATA_ROOT = path.join(__dirname, "data");
 const USERS_DB_PATH = path.join(DATA_ROOT, "users.db");
@@ -1535,6 +1536,6 @@ const server = http.createServer(async (request, response) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Engine clone server running at http://localhost:${PORT}/login.php`);
+server.listen(PORT, HOST, () => {
+  console.log(`Engine clone server running at http://${HOST}:${PORT}/login.php`);
 });

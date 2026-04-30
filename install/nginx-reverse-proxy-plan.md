@@ -18,6 +18,7 @@
    `systemctl status sitechat`
 4. Confirm local listening:
    `ss -ltnp | grep 3000`
+   You should see it bound on `0.0.0.0:3000` or the equivalent all-interfaces socket.
 5. If `firewalld` is enabled and nginx is on a different host, allow only the webserver:
    `firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="10.1.1.20/32" port protocol="tcp" port="3000" accept'`
 6. Remove broad access if needed:
@@ -82,6 +83,7 @@ server {
 
 On `10.1.1.23`:
 - `curl -I http://127.0.0.1:3000/login.php`
+- `curl -I http://10.1.1.23:3000/login.php`
 
 On `10.1.1.20`:
 - `curl -I http://10.1.1.23:3000/login.php`
