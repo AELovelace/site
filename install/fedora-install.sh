@@ -46,23 +46,21 @@ create_layout() {
   log "Creating application directories"
   install -d -m 0755 -o root -g root "${APP_ROOT}"
   install -d -m 0750 -o "${APP_USER}" -g "${APP_GROUP}" "${APP_ROOT}/data"
-  install -d -m 0755 -o root -g root "${APP_ROOT}/engine"
-  install -d -m 0755 -o root -g root "${APP_ROOT}/install"
 }
 
 sync_app() {
   log "Copying application files into ${APP_ROOT}"
   rsync -a --delete \
     --exclude ".git" \
-    --exclude "data/*.db" \
-    --exclude "data/*.sqlite*" \
+    --exclude "data/" \
     "${APP_REPO_SOURCE}/server.js" \
     "${APP_REPO_SOURCE}/package.json" \
-    "${APP_REPO_SOURCE}/engine/" \
-    "${APP_REPO_SOURCE}/install/" \
+    "${APP_REPO_SOURCE}/engine" \
+    "${APP_REPO_SOURCE}/install" \
     "${APP_ROOT}/"
 
   chown -R root:root "${APP_ROOT}"
+  install -d -m 0750 -o "${APP_USER}" -g "${APP_GROUP}" "${APP_ROOT}/data"
   chown -R "${APP_USER}:${APP_GROUP}" "${APP_ROOT}/data"
 }
 
