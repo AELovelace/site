@@ -1,47 +1,74 @@
-#slideout {
+:root {
+  --panel-gutter: 20px;
+  --panel-offset: 40px;
+}
+
+#slideout,
+#awoopanel {
+  position: relative;
   left: 0;
+}
+
+#slideout {
   width: 25px;
   -webkit-transition-duration: 0.3s;
   -moz-transition-duration: 0.3s;
   -o-transition-duration: 0.3s;
   transition-duration: 0.3s;
 }
-#slideout_inner {
+
+#slideout_inner,
+#awoopanel_inner {
   position: fixed;
-  top: 0px;
-  left: -600px;
+  left: var(--panel-offset);
   -webkit-transition-duration: 0.3s;
   -moz-transition-duration: 0.3s;
-  -o-transition-duration: 0.3s;
   transition-duration: 0.3s;
+  background-color: black;
+  border: 1px solid #a7a7a7;
+  margin: 1px;
+  max-width: calc(100vw - (var(--panel-gutter) * 2));
+  max-height: calc(100vh - (var(--panel-gutter) * 2));
+  max-height: calc(100dvh - (var(--panel-gutter) * 2));
+  overflow: auto;
+  padding: 8px;
+  transform: translateX(calc(-100% - var(--panel-offset)));
+  box-sizing: border-box;
+  z-index: 20;
 }
+
+#slideout_inner {
+  top: var(--panel-gutter);
+  width: min(320px, calc(100vw - (var(--panel-gutter) * 2)));
+}
+
 #slideout.is-open {
-  left: 1600px;
+  left: 0;
 }
+
 #slideout.is-open #slideout_inner {
-  left: 0;
+  transform: translateX(0);
 }
+
 #awoopanel {
-  left: 0;
   -webkit-transition-duration: 0.3s;
   -moz-transition-duration: 0.3s;
   -o-transition-duration: 0.3s;
   transition-duration: .75s;
 }
+
 #awoopanel_inner {
-	position: fixed;
-top: 40px;
-  left: -1600px;
-  -webkit-transition-duration: 0.3s;
-  -moz-transition-duration: 0.3s;
+  bottom: var(--panel-gutter);
   -o-transition-duration: 1.5s;
   transition-duration: .75s;
 }
+
 #awoopanel.is-open {
-  left: 700px;
-}
-#awoopanel.is-open #awoopanel_inner {
   left: 0;
+}
+
+#awoopanel.is-open #awoopanel_inner {
+  transform: translateX(0);
 }
 
 .panel-toggle {
@@ -49,4 +76,15 @@ top: 40px;
   border: 0;
   padding: 0;
   cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --panel-gutter: 12px;
+    --panel-offset: 28px;
+  }
+
+  #slideout_inner {
+    width: min(320px, calc(100vw - (var(--panel-gutter) * 2)));
+  }
 }

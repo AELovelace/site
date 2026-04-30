@@ -1094,7 +1094,7 @@ async function renderDashboardPage(session, responseHtml = "") {
     <p>:3</p>
     <div id="slideout" class="popout-panel">
       <button type="button" class="panel-toggle" data-panel-toggle="slideout" aria-expanded="false" aria-controls="slideout_inner">
-        <img src="${appUrl("/cpanel.png")}" alt="BitPanel" />
+        <img src="${appUrl("/media/chat/cpanel.png")}" alt="BitPanel" />
       </button>
       <div id="slideout_inner">
         <p>logged in as:</p>

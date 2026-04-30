@@ -1,4 +1,10 @@
+:root {
+  --panel-gutter: 20px;
+  --panel-offset: 40px;
+}
+
 #slideout {
+  position: relative;
   left: 0;
   -webkit-transition-duration: 0.3s;
   -moz-transition-duration: 0.3s;
@@ -6,10 +12,11 @@
   transition-duration: 0.3s;
   background-color: black;
 }
+
 #slideout_inner {
   position: fixed;
-  top: 40px;
-  left: -500px;
+  top: var(--panel-gutter);
+  left: var(--panel-offset);
   -webkit-transition-duration: 0.3s;
   -moz-transition-duration: 0.3s;
   -o-transition-duration: 0.3s;
@@ -17,15 +24,26 @@
   background-color: black;
   border: 1px solid #a7a7a7;
   margin: 1px;
-  width:50%;
+  width: min(320px, calc(100vw - (var(--panel-gutter) * 2)));
+  max-width: calc(100vw - (var(--panel-gutter) * 2));
+  max-height: calc(100vh - (var(--panel-gutter) * 2));
+  max-height: calc(100dvh - (var(--panel-gutter) * 2));
+  overflow: auto;
+  padding: 8px;
+  transform: translateX(calc(-100% - var(--panel-offset)));
+  box-sizing: border-box;
+  z-index: 20;
 }
+
 #slideout:hover {
-  left: 500px;
-}
-#slideout:hover #slideout_inner {
   left: 0;
+}
+
+#slideout:hover #slideout_inner {
+  transform: translateX(0);
   background-color: 111111;
 }
+
 #fileToUpload: {
 	form{
 		display: flex;
@@ -34,5 +52,12 @@
 		color: #cbf2f1;
 		width:100%;
 		background-color: 111111;
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --panel-gutter: 12px;
+    --panel-offset: 28px;
   }
 }
