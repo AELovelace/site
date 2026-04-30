@@ -123,7 +123,6 @@ async function verifyPassword(password, storedHash) {
 
 function ensureAppState() {
   fs.mkdirSync(DATA_ROOT, { recursive: true });
-  fs.mkdirSync(UIMG_ROOT, { recursive: true });
 }
 
 function initializeDatabase() {
